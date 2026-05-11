@@ -207,7 +207,8 @@ async function saveToDrive(){
   saveTimer=setTimeout(async()=>{
     setSyncStatus("ing","salvando…");
     try{
-      await fetch(SCRIPT_URL+"?method=save&body="+encodeURIComponent(payload));
+      const url=SCRIPT_URL+"?method=save&body="+encodeURIComponent(payload);
+      await fetch(url, {mode:"no-cors"});
       setSyncStatus("ok","✓ salvo");
     }catch(e){
       setSyncStatus("err","erro ao salvar");
