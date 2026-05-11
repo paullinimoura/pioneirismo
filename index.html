@@ -6,11 +6,11 @@
 <title>Pioneirismo</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:#f5f0e8; --card:#fffdf8; --ink:#1a1612; --muted:#7a6f62;
-    --green:#2d6a4f; --green-l:#d8f3e3; --green-m:#52b788;
-    --red:#e07a5f; --red-l:#fde8e3; --border:#e0d8cc;
-    --off:#f0ece4; --purple:#5c6bc0; --purple-l:#e8eaf6;
+  :root{
+    --bg:#f5f0e8;--card:#fffdf8;--ink:#1a1612;--muted:#7a6f62;
+    --green:#2d6a4f;--green-l:#d8f3e3;--green-m:#52b788;
+    --red:#e07a5f;--red-l:#fde8e3;--border:#e0d8cc;
+    --off:#f0ece4;--purple:#5c6bc0;--purple-l:#e8eaf6;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:24px 16px 48px;}
@@ -19,14 +19,23 @@
   input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
   input[type=number]{-moz-appearance:textfield;}
 
-  header{text-align:center;margin-bottom:28px;}
+  header{text-align:center;margin-bottom:24px;}
   h1{font-family:'DM Serif Display',serif;font-size:2rem;color:var(--green);}
   .subtitle{color:var(--muted);font-size:0.85rem;margin-top:4px;}
-  .target-input{font-size:0.85rem;font-weight:600;color:var(--green);background:none;border:none;border-bottom:1px dashed var(--green);width:36px;text-align:center;font-family:inherit;cursor:text;}
-  .sync-status{margin-left:8px;font-size:0.75rem;}
-  .sync-ok{color:var(--green-m);}
-  .sync-err{color:var(--red);}
-  .sync-ing{color:var(--muted);}
+  .target-input{font-size:0.85rem;font-weight:600;color:var(--green);background:none;border:none;border-bottom:1px dashed var(--green);width:36px;text-align:center;font-family:inherit;}
+
+  /* Drive buttons */
+  .drive-bar{display:flex;gap:10px;justify-content:center;margin-bottom:24px;flex-wrap:wrap;}
+  .drive-btn{display:flex;align-items:center;gap:6px;padding:9px 18px;border-radius:10px;font-family:inherit;font-size:.85rem;font-weight:500;cursor:pointer;border:none;transition:all .15s;}
+  .btn-save{background:var(--green);color:white;}
+  .btn-save:hover{background:#245a41;}
+  .btn-save:disabled{background:var(--green-m);cursor:default;}
+  .btn-load{background:var(--card);color:var(--green);border:1px solid var(--green);}
+  .btn-load:hover{background:var(--green-l);}
+  .btn-load:disabled{opacity:.6;cursor:default;}
+  .drive-status{font-size:.78rem;color:var(--muted);text-align:center;margin-top:-14px;margin-bottom:16px;min-height:18px;}
+  .drive-status.ok{color:var(--green-m);}
+  .drive-status.err{color:var(--red);}
 
   .month-bar{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
   .month-title{font-family:'DM Serif Display',serif;font-size:1.1rem;flex:1;min-width:120px;}
@@ -34,7 +43,7 @@
   .stat{text-align:center;}
   .stat-val{font-size:1.6rem;font-weight:600;color:var(--green);line-height:1;}
   .stat-val.warn{color:var(--red);}
-  .stat-lbl{font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
+  .stat-lbl{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
   .prog-wrap{flex:1;min-width:160px;}
   .prog-track{background:var(--border);border-radius:99px;height:8px;overflow:hidden;}
   .prog-fill{height:100%;background:var(--green-m);border-radius:99px;transition:width .4s;}
@@ -89,59 +98,88 @@
 
   .day-foot{margin-top:12px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;}
   .off-btn{font-size:.75rem;color:var(--muted);background:none;border:1px solid var(--border);border-radius:6px;padding:3px 10px;cursor:pointer;font-family:inherit;}
-  .off-btn:hover,.off-btn.on{background:var(--red-l);color:var(--red);border-color:var(--red);}
+  .off-btn.on{background:var(--red-l);color:var(--red);border-color:var(--red);}
 
   .week-sum{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
   .wsum-lbl{font-size:.85rem;color:var(--muted);}
   .wsum-tgt{font-size:.8rem;color:var(--muted);}
   .wsum-val{font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--green);}
-  .wsum-status{font-size:.8rem;padding:4px 12px;border-radius:99px;font-weight:500;}
-  .wsum-status.ok{background:var(--green-l);color:var(--green);}
-  .wsum-status.no{background:var(--red-l);color:var(--red);}
+  .wsum-badge{font-size:.8rem;padding:4px 12px;border-radius:99px;font-weight:500;}
+  .wsum-badge.ok{background:var(--green-l);color:var(--green);}
+  .wsum-badge.no{background:var(--red-l);color:var(--red);}
 
-  .actions{margin-top:16px;display:flex;justify-content:center;}
+  .bottom-actions{margin-top:16px;display:flex;justify-content:center;}
   .reset-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:8px 18px;font-family:inherit;font-size:.8rem;color:var(--muted);cursor:pointer;}
   .reset-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-l);}
   .tip{margin-top:20px;background:var(--green-l);border-radius:12px;padding:12px 16px;font-size:.8rem;color:var(--green);text-align:center;}
 
-  .loading{display:flex;align-items:center;justify-content:center;height:60vh;font-size:.9rem;color:var(--muted);}
+  .spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.4);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
 
 <header>
   <h1>Pioneirismo</h1>
-  <p class="subtitle">
-    Planejador mensal · Meta:
-    <input type="number" class="target-input" id="targetInp" value="50" min="1" max="999">h
-    <span class="sync-status sync-ing" id="syncStatus">carregando…</span>
-  </p>
+  <p class="subtitle">Meta: <input type="number" class="target-input" id="targetInp" value="50" min="1" max="999">h/mês</p>
 </header>
 
-<div id="app">
-  <div class="loading">Carregando dados…</div>
+<!-- Drive buttons -->
+<div class="drive-bar">
+  <button class="drive-btn btn-load" id="btnLoad" onclick="loadFromDrive()">☁ Carregar do Drive</button>
+  <button class="drive-btn btn-save" id="btnSave" onclick="saveToDrive()">💾 Salvar no Drive</button>
+</div>
+<div class="drive-status" id="driveStatus"></div>
+
+<!-- Month bar -->
+<div class="month-bar">
+  <div class="month-title" id="monthTitle"></div>
+  <div class="stats">
+    <div class="stat"><div class="stat-val" id="mTotal">0,0</div><div class="stat-lbl">horas no mês</div></div>
+    <div class="stat"><div class="stat-val warn" id="mRemain">—</div><div class="stat-lbl">faltam</div></div>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="prog-lbl"><span>0h</span><span id="progMax">50h</span></div>
+  </div>
 </div>
 
+<!-- Week nav -->
+<div class="week-nav">
+  <button class="nav-btn" id="prevBtn">← Anterior</button>
+  <span class="week-lbl" id="weekLbl">Semana 1</span>
+  <button class="nav-btn" id="nextBtn">Próxima →</button>
+</div>
+<div class="dots" id="dots"></div>
+<div class="days" id="days"></div>
+
+<!-- Week summary -->
+<div class="week-sum">
+  <div><div class="wsum-lbl">Total desta semana</div><div class="wsum-tgt" id="wTgt">Meta: ~12,5h/semana</div></div>
+  <div class="wsum-val" id="wTotal">0,0h</div>
+  <span class="wsum-badge no" id="wBadge">Abaixo da meta</span>
+</div>
+
+<div class="bottom-actions"><button class="reset-btn" id="resetBtn">Limpar semana</button></div>
+<div class="tip">💡 Use "Adicionar atividade" para registrar carrinho, testemunho informal, ou qualquer saída extra.</div>
+
 <script>
-// ─── CONFIG ────────────────────────────────────────────────────────────────────
-// Cole aqui a URL do seu Apps Script após publicar
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz9VAQedPxB__jtz5_TaI5A8oI3piqMMraeP8iLvBNrp8JreFSR4391BYNPjREEZjpLyA/exec";
 
-// ─── DEFAULTS ──────────────────────────────────────────────────────────────────
 const DEFAULT = {
-  dom:[{id:"dom_s",  name:"Serviço de campo", time:"8h15",  hours:2.0, custom:false}],
-  seg:[{id:"seg_c",  name:"Serviço de carta", time:"14h30", hours:1.5, custom:false},
-       {id:"seg_s",  name:"Serviço de carta", time:"18h30", hours:1.5, custom:false},
-       {id:"seg_k",  name:"Carrinho",          time:"",      hours:2.0, custom:false}],
-  ter:[{id:"ter_c",  name:"Serviço de carta", time:"14h30", hours:1.5, custom:false},
-       {id:"ter_s",  name:"Serviço de campo", time:"15h",   hours:2.0, custom:false},
-       {id:"ter_k",  name:"Carrinho",          time:"",      hours:2.0, custom:false}],
-  qua:[{id:"qua_s",  name:"Serviço de campo", time:"8h",    hours:2.0, custom:false}],
-  qui:[{id:"qui_s",  name:"Serviço de campo", time:"8h",    hours:2.0, custom:false},
-       {id:"qui_c",  name:"Serviço de carta", time:"14h30", hours:1.5, custom:false}],
-  sex:[{id:"sex_s",  name:"Serviço de carta", time:"8h",    hours:2.0, custom:false},
-       {id:"sex_c",  name:"Serviço de carta", time:"14h30", hours:1.5, custom:false}],
-  sab:[{id:"sab_s",  name:"Serviço de campo", time:"8h",    hours:2.0, custom:false}],
+  dom:[{id:"dom_s", name:"Serviço de campo",time:"8h15", hours:2.0,custom:false}],
+  seg:[{id:"seg_c", name:"Serviço de carta",time:"14h30",hours:1.5,custom:false},
+       {id:"seg_s", name:"Serviço de carta",time:"18h30",hours:1.5,custom:false},
+       {id:"seg_k", name:"Carrinho",         time:"",     hours:2.0,custom:false}],
+  ter:[{id:"ter_c", name:"Serviço de carta",time:"14h30",hours:1.5,custom:false},
+       {id:"ter_s", name:"Serviço de campo",time:"15h",  hours:2.0,custom:false},
+       {id:"ter_k", name:"Carrinho",         time:"",     hours:2.0,custom:false}],
+  qua:[{id:"qua_s", name:"Serviço de campo",time:"8h",   hours:2.0,custom:false}],
+  qui:[{id:"qui_s", name:"Serviço de campo",time:"8h",   hours:2.0,custom:false},
+       {id:"qui_c", name:"Serviço de carta",time:"14h30",hours:1.5,custom:false}],
+  sex:[{id:"sex_s", name:"Serviço de carta",time:"8h",   hours:2.0,custom:false},
+       {id:"sex_c", name:"Serviço de carta",time:"14h30",hours:1.5,custom:false}],
+  sab:[{id:"sab_s", name:"Serviço de campo",time:"8h",   hours:2.0,custom:false}],
 };
 const DAYS=["dom","seg","ter","qua","qui","sex","sab"];
 const DNAMES={dom:"Domingo",seg:"Segunda-feira",ter:"Terça-feira",qua:"Quarta-feira",qui:"Quinta-feira",sex:"Sexta-feira",sab:"Sábado"};
@@ -154,151 +192,116 @@ function defWeek(){
   for(const d of DAYS) w[d]={dayOff:false,activities:JSON.parse(JSON.stringify(DEFAULT[d]))};
   return w;
 }
-function defState(){
-  const s={};
-  for(let w=0;w<NW;w++) s[w]=defWeek();
-  return s;
+function defState(){const s={};for(let w=0;w<NW;w++)s[w]=defWeek();return s;}
+
+// ── JSONP ─────────────────────────────────────────────────────────────────────
+function jsonp(url){
+  return new Promise((resolve,reject)=>{
+    const cb="cb_"+Date.now()+"_"+Math.floor(Math.random()*9999);
+    const script=document.createElement("script");
+    const timer=setTimeout(()=>{cleanup();reject(new Error("timeout"));},15000);
+    function cleanup(){clearTimeout(timer);delete window[cb];script.remove();}
+    window[cb]=(data)=>{cleanup();resolve(data);};
+    script.src=url+(url.includes("?")?"&":"?")+"callback="+cb;
+    script.onerror=()=>{cleanup();reject(new Error("network error"));};
+    document.head.appendChild(script);
+  });
 }
 
-// ─── SYNC ──────────────────────────────────────────────────────────────────────
-let saveTimer=null;
-function setSyncStatus(type, msg){
-  const el=document.getElementById("syncStatus");
-  el.className="sync-status sync-"+type;
+// ── DRIVE ─────────────────────────────────────────────────────────────────────
+function setStatus(type,msg){
+  const el=document.getElementById("driveStatus");
+  el.className="drive-status"+(type?" "+type:"");
   el.textContent=msg;
 }
 
 async function loadFromDrive(){
-  if(!SCRIPT_URL||SCRIPT_URL==="COLE_A_URL_AQUI"){
-    setSyncStatus("err","⚠ configure a URL do script");
-    state=defState(); return;
-  }
+  const btn=document.getElementById("btnLoad");
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span> Carregando…';
+  setStatus("","");
   try{
-    setSyncStatus("ing","carregando…");
-    const res=await fetch(SCRIPT_URL+"?method=load");
-    const json=await res.json();
-    if(json.ok&&json.data){
-      state=json.data.state||defState();
-      target=json.data.target||50;
-      setSyncStatus("ok","✓ sincronizado");
+    const res=await jsonp(SCRIPT_URL+"?method=load");
+    if(res.ok&&res.data){
+      state=res.data.state||defState();
+      target=res.data.target||50;
+      document.getElementById("targetInp").value=target;
+      setStatus("ok","✓ Dados carregados do Drive");
     } else {
       state=defState();
-      setSyncStatus("ok","✓ novo registro");
+      setStatus("","Nenhum dado salvo ainda — começando do zero");
     }
   }catch(e){
-    console.warn("load error",e);
-    // fallback to localStorage
-    try{
-      const local=localStorage.getItem("pioneirismo_backup");
-      if(local){const d=JSON.parse(local);state=d.state||defState();target=d.target||50;}
-      else state=defState();
-    }catch{state=defState();}
-    setSyncStatus("err","sem conexão — dados locais");
+    state=defState();
+    setStatus("err","Erro ao carregar. Verifique sua conexão.");
+    console.warn(e);
   }
+  btn.disabled=false;
+  btn.innerHTML='☁ Carregar do Drive';
+  render();
 }
 
 async function saveToDrive(){
-  const payload=JSON.stringify({state,target});
-  // Always save locally as backup
-  try{localStorage.setItem("pioneirismo_backup",payload);}catch{}
-
-  if(!SCRIPT_URL||SCRIPT_URL==="COLE_A_URL_AQUI") return;
-  clearTimeout(saveTimer);
-  saveTimer=setTimeout(async()=>{
-    setSyncStatus("ing","salvando…");
-    try{
-      const url=SCRIPT_URL+"?method=save&body="+encodeURIComponent(payload);
-      await fetch(url, {mode:"no-cors"});
-      setSyncStatus("ok","✓ salvo");
-    }catch(e){
-      setSyncStatus("err","erro ao salvar");
+  const btn=document.getElementById("btnSave");
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span> Salvando…';
+  setStatus("","");
+  try{
+    const payload=encodeURIComponent(JSON.stringify({state,target}));
+    const res=await jsonp(SCRIPT_URL+"?method=save&body="+payload);
+    if(res.ok){
+      setStatus("ok","✓ Salvo no Drive com sucesso!");
+    } else {
+      setStatus("err","Erro ao salvar: "+(res.error||"desconhecido"));
     }
-  },800);
+  }catch(e){
+    setStatus("err","Erro ao salvar. Verifique sua conexão.");
+    console.warn(e);
+  }
+  btn.disabled=false;
+  btn.innerHTML='💾 Salvar no Drive';
 }
 
-// ─── MATH ──────────────────────────────────────────────────────────────────────
+// ── MATH ──────────────────────────────────────────────────────────────────────
 function fmt(h){return h.toFixed(1).replace(".",",");}
 function dHrs(w,d){if(state[w][d].dayOff)return 0;return state[w][d].activities.filter(a=>a.checked).reduce((s,a)=>s+(parseFloat(a.hours)||0),0);}
 function wHrs(w){return DAYS.reduce((s,d)=>s+dHrs(w,d),0);}
 function mHrs(){let t=0;for(let w=0;w<NW;w++)t+=wHrs(w);return t;}
 
-// ─── RENDER ────────────────────────────────────────────────────────────────────
-function buildApp(){
-  const app=document.getElementById("app");
-  app.innerHTML=`
-    <div class="month-bar">
-      <div class="month-title" id="monthTitle"></div>
-      <div class="stats">
-        <div class="stat"><div class="stat-val" id="mTotal">0,0</div><div class="stat-lbl">horas no mês</div></div>
-        <div class="stat"><div class="stat-val warn" id="mRemain">50,0h</div><div class="stat-lbl">faltam</div></div>
-      </div>
-      <div class="prog-wrap">
-        <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
-        <div class="prog-lbl"><span>0h</span><span id="progMax">50h</span></div>
-      </div>
-    </div>
-    <div class="week-nav">
-      <button class="nav-btn" id="prevBtn">← Anterior</button>
-      <span class="week-lbl" id="weekLbl">Semana 1</span>
-      <button class="nav-btn" id="nextBtn">Próxima →</button>
-    </div>
-    <div class="dots" id="dots"></div>
-    <div class="days" id="days"></div>
-    <div class="week-sum">
-      <div><div class="wsum-lbl">Total desta semana</div><div class="wsum-tgt" id="wTgt">Meta: ~12,5h/semana</div></div>
-      <div class="wsum-val" id="wTotal">0,0h</div>
-      <span class="wsum-status no" id="wStatus">Abaixo da meta</span>
-    </div>
-    <div class="actions"><button class="reset-btn" id="resetBtn">Limpar semana</button></div>
-    <div class="tip">💡 Use "Adicionar atividade" para registrar carrinho, testemunho informal, ou qualquer saída extra.</div>
-  `;
-
-  document.getElementById("prevBtn").onclick=()=>{if(week>0){week--;render();}};
-  document.getElementById("nextBtn").onclick=()=>{if(week<NW-1){week++;render();}};
-  document.getElementById("resetBtn").onclick=()=>{
-    for(const d of DAYS) state[week][d]=JSON.parse(JSON.stringify({dayOff:false,activities:DEFAULT[d]}));
-    saveToDrive(); render();
-  };
-  document.getElementById("targetInp").onchange=e=>{
-    const v=parseInt(e.target.value);
-    if(!isNaN(v)&&v>0){target=v;saveToDrive();render();}
-  };
-}
-
+// ── RENDER ────────────────────────────────────────────────────────────────────
 function render(){
-  if(!state) return;
-  const tw=target/4, mh=mHrs(), wh=wHrs(week), pct=Math.min(100,(mh/target)*100);
+  if(!state)return;
+  const tw=target/4,mh=mHrs(),wh=wHrs(week),pct=Math.min(100,(mh/target)*100);
 
   document.getElementById("monthTitle").textContent=new Date().toLocaleDateString("pt-BR",{month:"long",year:"numeric"}).replace(/^\w/,c=>c.toUpperCase());
   document.getElementById("mTotal").textContent=fmt(mh);
   document.getElementById("mRemain").textContent=fmt(Math.max(0,target-mh))+"h";
   document.getElementById("progFill").style.width=pct+"%";
   document.getElementById("progMax").textContent=target+"h";
-  document.getElementById("targetInp").value=target;
   document.getElementById("weekLbl").textContent="Semana "+(week+1);
+  document.getElementById("wTgt").textContent="Meta: ~"+fmt(tw)+"h/semana";
+  document.getElementById("wTotal").textContent=fmt(wh)+"h";
+  const wb=document.getElementById("wBadge");
+  if(wh>=tw){wb.textContent="Na meta ✓";wb.className="wsum-badge ok";}
+  else{wb.textContent="Faltam "+fmt(tw-wh)+"h";wb.className="wsum-badge no";}
 
   // dots
-  const dotsEl=document.getElementById("dots");
-  dotsEl.innerHTML="";
+  const dotsEl=document.getElementById("dots");dotsEl.innerHTML="";
   for(let w=0;w<NW;w++){
-    const d=document.createElement("div");
-    d.className="dot"+(w===week?" active":"");
-    d.onclick=(()=>{const ww=w;return()=>{week=ww;render();};})();
+    const d=document.createElement("div");d.className="dot"+(w===week?" active":"");
+    (w=>{d.onclick=()=>{week=w;render();};})(w);
     dotsEl.appendChild(d);
   }
 
   // days
-  const daysEl=document.getElementById("days");
-  daysEl.innerHTML="";
+  const daysEl=document.getElementById("days");daysEl.innerHTML="";
   for(const day of DAYS){
-    const ds=state[week][day];
-    const dh=dHrs(week,day);
-    const isOpen=!!openMap[week+"-"+day];
+    const ds=state[week][day],dh=dHrs(week,day),isOpen=!!openMap[week+"-"+day];
     const card=document.createElement("div");
     card.className="day-card"+(ds.dayOff?" off":"")+(isOpen?" open":"");
 
-    const head=document.createElement("div");
-    head.className="day-head";
+    // head
+    const head=document.createElement("div");head.className="day-head";
     head.onclick=()=>{openMap[week+"-"+day]=!openMap[week+"-"+day];render();};
     const hl=document.createElement("div");hl.className="day-head-l";
     const arr=document.createElement("span");arr.className="arrow";arr.textContent="▼";
@@ -308,81 +311,82 @@ function render(){
     else if(dh>0){const b=document.createElement("div");b.className="badge-green";b.textContent=fmt(dh)+"h";head.appendChild(b);}
     card.appendChild(head);
 
+    // body
     const body=document.createElement("div");body.className="day-body";
     if(!ds.dayOff){
       const acts=document.createElement("div");acts.className="acts";
       ds.activities.forEach((act,idx)=>{
-        const row=document.createElement("div");
-        row.className="act-row"+(act.custom?" custom":"");
+        const row=document.createElement("div");row.className="act-row"+(act.custom?" custom":"");
         const chk=document.createElement("div");
         chk.className="chk"+(act.checked?" on":"")+(act.custom&&act.checked?" purple":"");
         const mark=document.createElement("span");mark.className="chk-mark";mark.textContent="✓";
         chk.appendChild(mark);
-        chk.onclick=e=>{e.stopPropagation();act.checked=!act.checked;saveToDrive();render();};
+        chk.onclick=e=>{e.stopPropagation();act.checked=!act.checked;render();};
         const info=document.createElement("div");info.className="act-info";
         const ni=document.createElement("input");ni.type="text";ni.className="act-name";ni.value=act.name;
-        ni.onclick=e=>e.stopPropagation();
-        ni.onchange=e=>{act.name=e.target.value;saveToDrive();};
+        ni.onclick=e=>e.stopPropagation();ni.onchange=e=>{act.name=e.target.value;};
         const ti=document.createElement("input");ti.type="text";ti.className="act-time";ti.value=act.time||"";ti.placeholder="horário";
-        ti.onclick=e=>e.stopPropagation();
-        ti.onchange=e=>{act.time=e.target.value;saveToDrive();};
+        ti.onclick=e=>e.stopPropagation();ti.onchange=e=>{act.time=e.target.value;};
         info.appendChild(ni);info.appendChild(ti);
         const hw=document.createElement("div");hw.className="hrs-wrap";
         const hi=document.createElement("input");hi.type="number";hi.className="hrs-inp";hi.value=act.hours;hi.min=0;hi.max=24;hi.step=0.5;
         hi.onclick=e=>e.stopPropagation();
-        hi.onchange=e=>{const v=parseFloat(e.target.value);if(!isNaN(v)&&v>=0){act.hours=v;saveToDrive();render();}};
+        hi.onchange=e=>{const v=parseFloat(e.target.value);if(!isNaN(v)&&v>=0){act.hours=v;render();}};
         const hs=document.createElement("span");hs.className="hrs-sfx";hs.textContent="h";
         hw.appendChild(hi);hw.appendChild(hs);
         const rb=document.createElement("button");rb.className="rm-btn";rb.textContent="×";
-        rb.onclick=e=>{e.stopPropagation();ds.activities.splice(idx,1);saveToDrive();render();};
+        rb.onclick=e=>{e.stopPropagation();ds.activities.splice(idx,1);render();};
         row.appendChild(chk);row.appendChild(info);row.appendChild(hw);row.appendChild(rb);
         acts.appendChild(row);
       });
       body.appendChild(acts);
 
+      // add row
       const addRow=document.createElement("div");addRow.className="add-row";
-      const an=document.createElement("input");an.type="text";an.className="add-name";an.placeholder="Nova atividade (ex: Carrinho)";
-      an.onclick=e=>e.stopPropagation();
-      const ah=document.createElement("input");ah.type="number";ah.className="add-hrs";ah.placeholder="horas";ah.min=0.5;ah.max=24;ah.step=0.5;
-      ah.onclick=e=>e.stopPropagation();
+      const an=document.createElement("input");an.type="text";an.className="add-name";an.placeholder="Nova atividade (ex: Carrinho)";an.onclick=e=>e.stopPropagation();
+      const ah=document.createElement("input");ah.type="number";ah.className="add-hrs";ah.placeholder="horas";ah.min=0.5;ah.max=24;ah.step=0.5;ah.onclick=e=>e.stopPropagation();
       const ab=document.createElement("button");ab.className="add-btn";ab.textContent="+ Adicionar";
       ab.onclick=e=>{
         e.stopPropagation();
         const n=an.value.trim(),h=parseFloat(ah.value);
         if(!n){an.focus();return;}if(isNaN(h)||h<=0){ah.focus();return;}
         ds.activities.push({id:"c"+Date.now(),name:n,time:"",hours:h,custom:true,checked:false});
-        an.value="";ah.value="";saveToDrive();render();
+        an.value="";ah.value="";render();
       };
-      const tryAdd=e=>{if(e.key==="Enter")ab.click();};
-      an.onkeydown=tryAdd;ah.onkeydown=tryAdd;
+      const enter=e=>{if(e.key==="Enter")ab.click();};
+      an.onkeydown=enter;ah.onkeydown=enter;
       addRow.appendChild(an);addRow.appendChild(ah);addRow.appendChild(ab);
       body.appendChild(addRow);
     }
 
+    // footer
     const foot=document.createElement("div");foot.className="day-foot";
     const ob=document.createElement("button");
     ob.className="off-btn"+(ds.dayOff?" on":"");
     ob.textContent=ds.dayOff?"↩ Restaurar dia":"Marcar como dia livre";
     ob.onclick=e=>{
-      e.stopPropagation();
-      ds.dayOff=!ds.dayOff;
+      e.stopPropagation();ds.dayOff=!ds.dayOff;
       if(ds.dayOff)ds.activities.forEach(a=>a.checked=false);
-      saveToDrive();render();
+      render();
     };
     foot.appendChild(ob);body.appendChild(foot);
-    card.appendChild(body);
-    daysEl.appendChild(card);
+    card.appendChild(body);daysEl.appendChild(card);
   }
-
-  document.getElementById("wTgt").textContent="Meta: ~"+fmt(tw)+"h/semana";
-  document.getElementById("wTotal").textContent=fmt(wh)+"h";
-  const ws=document.getElementById("wStatus");
-  if(wh>=tw){ws.textContent="Na meta ✓";ws.className="wsum-status ok";}
-  else{ws.textContent="Faltam "+fmt(tw-wh)+"h";ws.className="wsum-status no";}
 }
 
-// ─── INIT ──────────────────────────────────────────────────────────────────────
-loadFromDrive().then(()=>{buildApp();render();});
+// ── INIT ──────────────────────────────────────────────────────────────────────
+document.getElementById("prevBtn").onclick=()=>{if(week>0){week--;render();}};
+document.getElementById("nextBtn").onclick=()=>{if(week<NW-1){week++;render();}};
+document.getElementById("resetBtn").onclick=()=>{
+  for(const d of DAYS)state[week][d]=defWeek()[d];
+  render();
+};
+document.getElementById("targetInp").onchange=e=>{
+  const v=parseInt(e.target.value);if(!isNaN(v)&&v>0){target=v;render();}
+};
+
+// Start by loading from Drive automatically
+loadFromDrive();
 </script>
 </body>
 </html>
