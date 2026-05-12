@@ -233,10 +233,13 @@ async function loadFromDrive(){
   try{
     const j=await jsonp(SCRIPT_URL+"?action=load&t="+Date.now());
     if(j&&j.status==="ok"&&j.data){
-      state=j.data.state||defState();
+      // Validate structure — must have weeks 0-3 with day keys
+      const loaded=j.data.state;
+      const valid=loaded&&[0,1,2,3].every(w=>loaded[w]&&DAYS.every(d=>loaded[w][d]?.activities));
+      state=valid ? loaded : defState();
       target=j.data.target||50;
       document.getElementById("targetInp").value=target;
-      setStatus("ok","✓ Dados carregados do Drive");
+      setStatus("ok", valid ? "✓ Dados carregados do Drive" : "✓ Conectado — novo registro");
     } else {
       state=defState();
       setStatus("","Nenhum dado salvo ainda — começando do zero");
@@ -391,7 +394,7 @@ document.getElementById("resetBtn").onclick=()=>{
   for(const d of DAYS)state[week][d]=defWeek()[d];
   render();
 };
-document.getElementById("targetInp").onchange=e=>{
+document.getElementById("targetInp").oninput=e=>{
   const v=parseInt(e.target.value);if(!isNaN(v)&&v>0){target=v;render();}
 };
 
