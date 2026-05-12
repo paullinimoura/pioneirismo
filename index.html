@@ -194,25 +194,20 @@ function defWeek(){
 }
 function defState(){const s={};for(let w=0;w<NW;w++)s[w]=defWeek();return s;}
 
-// ── JSONP ─────────────────────────────────────────────────────────────────────
-function jsonp(url){
-  return new Promise((resolve,reject)=>{
-    const cb="cb_"+Date.now()+"_"+Math.floor(Math.random()*9999);
-    const script=document.createElement("script");
-    const timer=setTimeout(()=>{cleanup();reject(new Error("timeout"));},15000);
-    function cleanup(){clearTimeout(timer);delete window[cb];script.remove();}
-    window[cb]=(data)=>{cleanup();resolve(data);};
-    script.src=url+(url.includes("?")?"&":"?")+"callback="+cb;
-    script.onerror=()=>{cleanup();reject(new Error("network error"));};
-    document.head.appendChild(script);
-  });
-}
-
 // ── DRIVE ─────────────────────────────────────────────────────────────────────
 function setStatus(type,msg){
   const el=document.getElementById("driveStatus");
   el.className="drive-status"+(type?" "+type:"");
   el.textContent=msg;
+}
+
+async function callScript(params){
+  const url=SCRIPT_URL+"?"+params;
+  const res=await fetch(url,{redirect:"follow"});
+  const text=await res.text();
+  // Parse both plain JSON and JSONP formats
+  const clean=text.trim().replace(/^[^(]*\(/, "").replace(/\);?\s*$/, "");
+  return JSON.parse(clean);
 }
 
 async function loadFromDrive(){
@@ -221,10 +216,10 @@ async function loadFromDrive(){
   btn.innerHTML='<span class="spinner"></span> Carregando…';
   setStatus("","");
   try{
-    const res=await jsonp(SCRIPT_URL+"?method=load");
-    if(res.ok&&res.data){
-      state=res.data.state||defState();
-      target=res.data.target||50;
+    const json=await callScript("method=load");
+    if(json.ok&&json.data){
+      state=json.data.state||defState();
+      target=json.data.target||50;
       document.getElementById("targetInp").value=target;
       setStatus("ok","✓ Dados carregados do Drive");
     } else {
@@ -248,11 +243,11 @@ async function saveToDrive(){
   setStatus("","");
   try{
     const payload=encodeURIComponent(JSON.stringify({state,target}));
-    const res=await jsonp(SCRIPT_URL+"?method=save&body="+payload);
-    if(res.ok){
+    const json=await callScript("method=save&body="+payload);
+    if(json.ok){
       setStatus("ok","✓ Salvo no Drive com sucesso!");
     } else {
-      setStatus("err","Erro ao salvar: "+(res.error||"desconhecido"));
+      setStatus("err","Erro ao salvar: "+(json.error||"desconhecido"));
     }
   }catch(e){
     setStatus("err","Erro ao salvar. Verifique sua conexão.");
