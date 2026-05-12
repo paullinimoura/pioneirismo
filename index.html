@@ -260,13 +260,15 @@ async function saveToDrive(){
   btn.innerHTML='<span class="spinner"></span> Salvando…';
   setStatus("","");
   try{
-    const encoded=encodeURIComponent(JSON.stringify({state,target}));
-    const j=await jsonp(SCRIPT_URL+"?action=save&d="+encoded+"&t="+Date.now());
-    if(j&&j.status==="ok"){
-      setStatus("ok","✓ Salvo no Drive com sucesso!");
-    } else {
-      setStatus("err","Erro: "+(j?.error||"desconhecido"));
+    // Save target first
+    await jsonp(SCRIPT_URL+"?action=save_target&d="+encodeURIComponent(String(target))+"&t="+Date.now());
+    // Save each week separately to keep URL size small
+    for(let w=0;w<NW;w++){
+      const encoded=encodeURIComponent(JSON.stringify({w,week:state[w]}));
+      const j=await jsonp(SCRIPT_URL+"?action=save_week&d="+encoded+"&t="+Date.now());
+      if(!j||j.status!=="ok") throw new Error("Falhou na semana "+(w+1));
     }
+    setStatus("ok","✓ Salvo no Drive com sucesso!");
   }catch(e){
     setStatus("err","Erro ao salvar: "+e.message);
     console.warn(e);
