@@ -201,30 +201,27 @@ function setStatus(type,msg){
   el.textContent=msg;
 }
 
-function scriptRequest(params){
-  return new Promise((resolve, reject)=>{
-    const cbName="pion_cb_"+Date.now();
-    const script=document.createElement("script");
+function jsonp(url, timeout=12000){
+  return new Promise((resolve,reject)=>{
+    const cb="_cb"+Date.now();
+    let done=false;
     const timer=setTimeout(()=>{
-      cleanup();
-      reject(new Error("timeout"));
-    }, 20000);
-
+      if(!done){done=true;cleanup();reject(new Error("timeout"));}
+    },timeout);
+    window[cb]=data=>{
+      if(!done){done=true;cleanup();resolve(data);}
+    };
+    const s=document.createElement("script");
+    s.src=url+"&cb="+cb;
+    s.onerror=()=>{
+      if(!done){done=true;cleanup();reject(new Error("error"));}
+    };
     function cleanup(){
       clearTimeout(timer);
-      delete window[cbName];
-      if(script.parentNode) script.parentNode.removeChild(script);
+      delete window[cb];
+      if(s.parentNode) s.parentNode.removeChild(s);
     }
-
-    window[cbName]=(data)=>{
-      cleanup();
-      resolve(data);
-    };
-
-    // Add callback param so Apps Script wraps response
-    script.src=SCRIPT_URL+"?"+params+"&callback="+cbName;
-    script.onerror=()=>{cleanup(); reject(new Error("Script load error"));};
-    document.head.appendChild(script);
+    document.head.appendChild(s);
   });
 }
 
@@ -234,10 +231,10 @@ async function loadFromDrive(){
   btn.innerHTML='<span class="spinner"></span> Carregando…';
   setStatus("","");
   try{
-    const json=await scriptRequest("method=load");
-    if(json.ok&&json.data){
-      state=json.data.state||defState();
-      target=json.data.target||50;
+    const j=await jsonp(SCRIPT_URL+"?action=load&t="+Date.now());
+    if(j&&j.status==="ok"&&j.data){
+      state=j.data.state||defState();
+      target=j.data.target||50;
       document.getElementById("targetInp").value=target;
       setStatus("ok","✓ Dados carregados do Drive");
     } else {
@@ -260,12 +257,12 @@ async function saveToDrive(){
   btn.innerHTML='<span class="spinner"></span> Salvando…';
   setStatus("","");
   try{
-    const payload=encodeURIComponent(JSON.stringify({state,target}));
-    const json=await scriptRequest("method=save&body="+payload);
-    if(json.ok){
+    const encoded=encodeURIComponent(JSON.stringify({state,target}));
+    const j=await jsonp(SCRIPT_URL+"?action=save&d="+encoded+"&t="+Date.now());
+    if(j&&j.status==="ok"){
       setStatus("ok","✓ Salvo no Drive com sucesso!");
     } else {
-      setStatus("err","Erro: "+(json.error||"desconhecido"));
+      setStatus("err","Erro: "+(j?.error||"desconhecido"));
     }
   }catch(e){
     setStatus("err","Erro ao salvar: "+e.message);
